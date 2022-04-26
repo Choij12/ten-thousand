@@ -1,4 +1,4 @@
-from random import randint, sample
+import random 
 from collections import Counter
 
 class GameLogic:
