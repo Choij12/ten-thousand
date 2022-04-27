@@ -1,5 +1,6 @@
 import random 
 from collections import Counter
+from random import randint, sample
 
 class GameLogic:
     def __init__(self):
@@ -7,10 +8,8 @@ class GameLogic:
 
     @staticmethod
     def roll_dice(num_dice):
-        dice_list = []
-        for _ in range(num_dice):
-            dice_list.append(random.randint(1, 6))
-            return tuple(dice_list)
+        return tuple(randint(1, 6) for _ in range(0, num_dice))
+
 
     @staticmethod
     def calculate_score(dice):
@@ -27,25 +26,29 @@ class GameLogic:
                 score = 1500
                 return score
 
-        for i in range(1, 6):
+        if count[2] == 2 and count[3] == 2 and count[6] == 2:
+            score = 1500
+            return score
+
+        for i in range(1, 7):
                 if i == 1 and count[1] == 3:
                     score += 1000
                 elif i != 1 and count[i] == 3:
                     score += i * 100
             
-        for i in range(1, 6):
+        for i in range(1, 7):
                 if i == 1 and count[1] == 4:
                     score += 2000
                 elif i != 1 and count[i] == 4:
                     score += i * 100 * 2
 
-        for i in range(1, 6):
+        for i in range(1, 7):
                 if i == 1 and count[1] == 5:
                     score += 3000
                 elif i != 1 and count[i] == 5:
                     score += i * 100 * 3
 
-        for i in range(1, 6):
+        for i in range(1, 7):
                 if i == 1 and count[1] == 6:
                     score += 4000 
                 elif i != 1 and count[i] == 6:
