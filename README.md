@@ -15,3 +15,12 @@
 - The output from calculate_score is an integer representing the roll’s score according to rules of game.
 - Handle rolling dice
 - Handle banking points
+- Application should implement all features from previous version
+- Application should simulate rolling between 1 and 6 dice
+- Application should allow user to set aside dice each roll
+- Application should allow “banking” current score or rolling again.
+- Application should keep track of total score
+- Application should keep track of current round
+- Application should have automated tests to ensure proper operation
+
+
