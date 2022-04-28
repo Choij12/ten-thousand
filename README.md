@@ -26,8 +26,11 @@
 - Should handle setting aside scoring dice and continuing turn with remaining dice.
 - Should handle when cheating occurs.
 Or just typos.
-- E.g. roll = [1,3,5,2] and user selects 1, 1, 1, 1, 1, 1
 - Should allow user to continue rolling with 6 new dice when all dice have - scored in current turn.
 - Handle zilch
 - No points for round, and round is over
+- Create an AI Bot to play Ten Thousand
+- The only method available for use from Game class is play.
+- All static methods of GameLogic class are available.
+- All other interactions with game can take place ONLY via the I/O features of the game.
 
