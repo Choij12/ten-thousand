@@ -36,16 +36,22 @@ class Game:
             self.start_round(roller)
 
     def zilch(self, rolled_dice):
-        if len(GameLogic.get_scorers(rolled_dice)) == 0:
-            self.validate_dice()
+        if len(GameLogic.get_scorers(rolled_dice)) == 0:  # also need to print dice roll
+            print("****************************************")
+            print("**        Zilch!!! Round over         **")
+            print("****************************************")
+            self.banker.clear_shelf()
+            self.bank_earned_points(
+                1000
+            )  # 1000 needs to be replaced with the actual earned points
             return True
 
         return False
 
-    
     def validate_dice(self, rolled_dice, roller):
         print(f"{GameLogic.calculate_score(rolled_dice)} score")
         if GameLogic.calculate_score(rolled_dice) == 0:
+        
             print("****************************************")
             print("**        Zilch!!! Round over         **")
             print("****************************************")
@@ -61,22 +67,24 @@ class Game:
         if response == "q":
             print(f"Thanks for playing. You earned {self.banker.balance} points")
             sys.exit()
-        else: 
+        else:
             # print("Cheater!!! Or possibly made a typo...")
             return self.validate_dice(rolled_dice, roller)
-
 
     def start_round(self, roller):
 
         new_round = True
         cheater_or_typo = False
-        while self.status and self.banker.balance <= 10000:
+        while self.status and self.banker.balance <= 1000:
             if new_round:
                 self.rounds += 1
                 print(f"Starting round {self.rounds}")
             if not cheater_or_typo:
                 print(f"Rolling {self.dice_quantity} dice...")
-            roll = roller(self.dice_quantity)
+            roll = GameLogic.roll_dice(self.dice_quantity)
+            if self.dice_quantity == 0 or len(GameLogic.get_scorers(roll)) == 0:
+                self.dice_quantity = 6
+
             
             roller_str = " "
             roller_str = " ".join(map(str, roll))
@@ -84,16 +92,17 @@ class Game:
             # for num in roll:
             #     roller_str += str(num) + " "
             print(f"*** {roller_str} ***")
+            self.zilch(roll)
             print(f"Enter dice to keep, or (q)uit:")
             response = input("> ")
-            
+
             if response == "q":
                 print(f"Thanks for playing. You earned {self.banker.balance} points")
                 sys.exit()
             else:
                 cheater_or_typo = False
                 user_response = tuple(map(int, list(response)))
-                
+
                 if not GameLogic.validate_keepers(roll, user_response):
                     new_round = False
                     cheater_or_typo = True
@@ -103,7 +112,9 @@ class Game:
                 self.dice_quantity -= len(user_response)
                 score = GameLogic.calculate_score(user_response)
                 self.banker.shelf(score)
-                print(f"You have {self.banker.shelved} unbanked points and {self.dice_quantity} dice remaining")
+                print(
+                    f"You have {self.banker.shelved} unbanked points and {self.dice_quantity} dice remaining"
+                )
                 print(f"(r)oll again, (b)ank your points or (q)uit:")
                 response = input("> ")
 
@@ -117,9 +128,9 @@ class Game:
 
             elif response == "r":
                 new_round = False
-                if self.dice_quantity == 0:
-                    self.dice_quantity = 6
-                    
+
+                # if self.dice_quantity == 0 or self.zilch(roll):
+                #     self.dice_quantity = 6
 
             elif response == "q":
                 print(f"Thanks for playing. You earned {self.banker.balance} points")
