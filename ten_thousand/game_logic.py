@@ -3,76 +3,101 @@ from collections import Counter
 from random import randint, sample
 
 class GameLogic:
-  @staticmethod
-  def calculate_stuff(tuple_of_dice, type_of_return):
+    def __init__(self):
+        pass
 
-    score = 0
-    scoring_dice = []
-    counts = Counter(tuple_of_dice)
+    @staticmethod
+    def roll_dice(num_dice):
+        return tuple(randint(1, 6) for _ in range(0, num_dice))
 
-    if tuple_of_dice and set(tuple_of_dice) == set((1, 2, 3, 4, 5, 6)):
-        score += 1500
-        scoring_dice.extend([*tuple_of_dice])
-    elif len(counts) == 3 and set(counts.values()) == set((2,)):
-        score += 1500
-        scoring_dice.extend([*tuple_of_dice])
-    else:
-        for key, count in counts.items():
-            if count >= 3:
-                if key == 1:
-                    score += (count - 2) * 1000
-                    scoring_dice.extend([key for _ in range(count)])
-                else:
-                    score += (count - 2) * key * 100
-                    scoring_dice.extend([key for _ in range(count)])
+    @staticmethod
+    def get_scorers(input_):
+        result = []
+        for num in input_:
+            if num == 1 or num == 5:
+                result.append(num)
+        return result
+
+    @staticmethod
+    def validate_keepers(roll, keepers):
+        rolled_data = list(roll)
+        valid = True
+        for num in keepers:
+            if num in rolled_data:
+                rolled_data.remove(num)
             else:
-                if key == 5:
-                    score += 50 * count
-                    scoring_dice.extend([key for _ in range(count)])
-                if key == 1:
-                    score += 100 * count
-                    scoring_dice.extend([key for _ in range(count)])
+                valid = False
+                break
+        return valid
 
-    if type_of_return == 'score':
+
+    @staticmethod
+    def calculate_score(dice):
+        score = 0
+        count = Counter(dice[:6])
+        straight = sorted(dice)
+      
+        if count[5] == 1 or count[5] == 2:
+            score += 50 * count[5]
+        if count[1] == 1 or count[1] == 2:
+            score += 100 * count[1]
+
+        if straight == [1, 2, 3, 4, 5, 6]:
+            score = 1500
+            return score
+
+        pair_of_two = 0
+        if count[1] == 2:
+            pair_of_two += 1
+        if count[2] == 2:
+            pair_of_two += 1
+        if count[3] == 2:
+            pair_of_two += 1
+        if count[4] == 2:
+            pair_of_two += 1
+        if count[5] == 2:
+            pair_of_two += 1
+        if count[6] == 2:
+            pair_of_two += 1
+        
+        if pair_of_two == 3:
+            score = 1500
+            return score
+
+
+     
+
+        
+        for i in range(1, 7):
+            if i == 1 and count[1] == 3:
+                score += 1000
+            elif i != 1 and count[i] == 3:
+                score += i * 100
+            
+        for i in range(1, 7):
+            if i == 1 and count[1] == 4:
+                score += 2000
+            elif i != 1 and count[i] == 4:
+                score += i * 100 * 2
+
+        for i in range(1, 7):
+            if i == 1 and count[1] == 5:
+                score += 3000
+            elif i != 1 and count[i] == 5:
+                score += i * 100 * 3
+
+        for i in range(1, 7):
+            if i == 1 and count[1] == 6:
+                score += 4000
+            elif i != 1 and count[i] == 6:
+                score += i * 100 * 4
+
         return score
-    elif type_of_return == 'scoring_dice':
-        return tuple(scoring_dice)
 
-  @staticmethod
-  def calculate_score(tuple_of_dice):
-        return GameLogic.calculate_stuff(tuple_of_dice, 'score')
 
-  @staticmethod
-  def get_scorers(tuple_of_dice):
-        return GameLogic.calculate_stuff(tuple_of_dice, 'scoring_dice')
 
-  @staticmethod
-  def roll_dice(amount_of_dice_1_to_6):
 
-    temporary_list = []
 
-    for _ in range(amount_of_dice_1_to_6):
-        temporary_list.append(random.randint(1, 6))
-
-    return tuple(temporary_list)
-
-  @staticmethod
-  def validate_keepers(tuple_of_rolled_dice,tuple_of_keepers_possible):
-    actual = sorted(list(GameLogic.get_scorers(tuple_of_rolled_dice)))
-    expected = sorted(list(tuple_of_keepers_possible))
-
-    if actual == expected:
-      return True
-    else:
-      return False
-
-  @staticmethod
-  def validate_input(tuple_of_rolled_dice, user_input):
-    counter_rolled = Counter(tuple_of_rolled_dice)
-    counter_input = Counter(user_input)
-
-    for key, user_count in counter_input.items():
-        if user_count > counter_rolled[key]:
-            return False
-    
-    return True
+        # return tuple(randint(1,6) for _ in range(0,num_dice))
+        # # or
+        # # return tuple(sample(range(1, 6 + 1), num_dice))
