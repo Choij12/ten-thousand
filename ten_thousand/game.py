@@ -2,13 +2,14 @@ from ten_thousand.game_logic import GameLogic
 from ten_thousand.banker import Banker
 import sys
 
-
 class Game:
     def __init__(self):
         self.banker = Banker()
         self.dice_quantity = 6
         self.rounds = 0
         self.status = True
+        self.playing = True
+        self.kept_dice = ()
 
     # def play(self, roller=GameLogic.roll_dice):
     def default_roller(self):
