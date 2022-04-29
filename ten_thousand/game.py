@@ -27,6 +27,7 @@ class Game:
             elif response == "y":
                 self.start_round(roller)
 
+
     def bank_earned_points(self, roller):
         print(f"You banked {self.banker.shelved} points in round {self.rounds}")
         self.banker.bank()
@@ -120,6 +121,7 @@ class Game:
                 new_round = False
                 if self.dice_quantity == 0:
                     self.dice_quantity = 6
+
                     
 
             elif response == "q":
