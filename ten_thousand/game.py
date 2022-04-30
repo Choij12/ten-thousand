@@ -27,6 +27,10 @@ class Game:
             elif response == "y":
                 self.start_round(roller)
 
+    def end_game(self):
+        print(f"Thanks for playing. You earned {self.banker.balance} points")
+        sys.exit()
+
 
     def bank_earned_points(self, roller):
         print(f"You banked {self.banker.shelved} points in round {self.rounds}")
@@ -37,35 +41,68 @@ class Game:
         else:
             self.start_round(roller)
 
-    def zilch(self, rolled_dice):
-        if len(GameLogic.get_scorers(rolled_dice)) == 0:
-            self.validate_dice()
-            return True
+    def is_zilch(self, roll):
+        return GameLogic.calculate_score(roll) == 0
 
-        return False
+    def do_zilch(self):
+        self.banker.clear_shelf()
+        print("****************************************")
+        print("**        Zilch!!! Round over         **")
+        print("****************************************")
+    
+    def collect_keepers(self, roll):
+        keeper_values = self.validate_keepers(roll)
+        points_for_current_roll = GameLogic.calculate_score(keeper_values)
+        self.banker.shelf(points_for_current_roll)
+        return keeper_values
+
+    def validate_keepers(self, roll):
+        while True:
+            print("Enter dice to keep, or (q)uit:")
+            response = input("> ")
+            if response == "q":
+                self.end_game()
+
+            keeper_values = []
+            for char in response:
+                if char.isnumeric():
+                    keeper_values.append(int(char))
+
+            if GameLogic.validate_keepers(roll, keeper_values):
+                return keeper_values
+            else:
+                print("Cheater!!! Or possibly made a typo...")
+                print(self.format_roll(roll))
+
+    # def zilch(self, rolled_dice):
+    #     if len(GameLogic.get_scorers(rolled_dice)) == 0:
+    #         self.validate_dice()
+    #         return True
+
+    #     return False
 
     
-    def validate_dice(self, rolled_dice, roller):
-        print(f"{GameLogic.calculate_score(rolled_dice)} score")
-        if GameLogic.calculate_score(rolled_dice) == 0:
-            print("****************************************")
-            print("**        Zilch!!! Round over         **")
-            print("****************************************")
-            self.banker.clear_shelf()
-            self.bank_earned_points()
-        else:
-            print("Enter dice to keep or (q)uit:")
-            response = input(">")
-            if response:
-                response = response.replace(" ", "")
-            else:
-                self.validate_dice(rolled_dice, roller)
-        if response == "q":
-            print(f"Thanks for playing. You earned {self.banker.balance} points")
-            sys.exit()
-        else: 
-            # print("Cheater!!! Or possibly made a typo...")
-            return self.validate_dice(rolled_dice, roller)
+    # def validate_dice(self, rolled_dice, roller):
+    #     print(f"{GameLogic.calculate_score(rolled_dice)} score")
+    #     if GameLogic.calculate_score(rolled_dice) == 0:
+    #         print("****************************************")
+    #         print("**        Zilch!!! Round over         **")
+    #         print("****************************************")
+    #         self.banker.clear_shelf()
+    #         self.bank_earned_points()
+    #     else:
+    #         print("Enter dice to keep or (q)uit:")
+    #         response = input(">")
+    #         if response:
+    #             response = response.replace(" ", "")
+    #         else:
+    #             self.validate_dice(rolled_dice, roller)
+    #     if response == "q":
+    #         print(f"Thanks for playing. You earned {self.banker.balance} points")
+    #         sys.exit()
+    #     else: 
+    #         # print("Cheater!!! Or possibly made a typo...")
+    #         return self.validate_dice(rolled_dice, roller)
 
 
     def start_round(self, roller):
@@ -121,8 +158,6 @@ class Game:
                 new_round = False
                 if self.dice_quantity == 0:
                     self.dice_quantity = 6
-
-                    
 
             elif response == "q":
                 print(f"Thanks for playing. You earned {self.banker.balance} points")
