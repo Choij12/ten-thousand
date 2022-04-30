@@ -8,6 +8,7 @@ class Banker:
         return self.shelved
 
     def bank(self):
+        amount_deposited = self.shelved
         self.balance += self.shelved
         self.shelved = 0
         return self.balance
